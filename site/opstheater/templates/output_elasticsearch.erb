@@ -1,0 +1,7 @@
+
+
+  elasticsearch {
+    
+    hosts => [<% unless @output_elasicsearch_hosts.nil? %><% @output_elasicsearch_hosts.each do |hosts| %> "<%= hosts%>"<% end %> <% end %>]
+    
+  }

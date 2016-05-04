@@ -1,0 +1,8 @@
+---
+# Can be true, false, or http/https to enable just one of the protocols
+:enabled: true
+
+:ssldir: /etc/puppetlabs/puppet/ssl
+:puppetdir: /etc/puppetlabs/puppet
+#:puppetca_use_sudo: true
+#:sudo_command: /usr/bin/sudo

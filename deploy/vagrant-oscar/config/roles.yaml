@@ -1,0 +1,168 @@
+---
+roles:
+  pe-puppet-master:
+    provider:
+      type: virtualbox
+      customize:
+        - [modifyvm, !ruby/sym id, '--memory', 8192]
+    provisioners:
+      -
+        type: hosts
+        add_localhost_hostnames: false
+        sync_hosts: true
+      - type: shell
+        inline: |-
+          /bin/systemctl stop firewalld
+      -
+        type: pe_bootstrap
+        role: !ruby/sym master
+      -
+        type: shell
+        inline: |-
+          /usr/local/bin/puppet module install zack-r10k --version 3.2.0
+          /usr/local/bin/puppet module install abrader-gms --version 1.0.2
+          /usr/local/bin/puppet apply /vagrant/manifests/r10k_installation.pp
+          /usr/local/bin/r10k deploy environment -pv
+          /bin/echo '==> puppet config set hiera_config /etc/puppetlabs/code/environments/production/hiera.yaml'
+          /usr/local/bin/puppet config set hiera_config /etc/puppetlabs/code/environments/production/hiera.yaml
+          /bin/echo '==> /bin/systemctl restart pe-puppetserver'
+          /bin/systemctl restart pe-puppetserver
+          /bin/echo '==> /usr/local/bin/puppet agent -t'
+          /usr/local/bin/puppet agent -t || true
+          /sbin/service puppet stop
+
+  foss-puppet-master:
+    provider:
+      type: virtualbox
+      customize:
+        - [modifyvm, !ruby/sym id, '--memory', 6144]
+    provisioners:
+      -
+        type: hosts
+        add_localhost_hostnames: false
+        sync_hosts: true
+      - type: shell
+        inline: |-
+          /bin/echo '==> Disabling firewall'
+          /bin/systemctl stop firewalld
+          /bin/systemctl disable firewalld
+          /bin/yum install -y -q https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm epel-release
+          /bin/yum install -y -q puppetserver
+          /opt/puppetlabs/bin/puppet module install puppetlabs/puppetdb --version 5.1.2
+          /opt/puppetlabs/bin/puppet module install puppetlabs/vcsrepo --version 1.3.2
+          /opt/puppetlabs/bin/puppet module install zack/r10k --version 3.2.0
+          /opt/puppetlabs/bin/puppet module install abrader/gms --version 1.0.2
+          /opt/puppetlabs/bin/puppet module install ajcrowe/supervisord --ignore-dependencies --version 0.6.0
+          /bin/echo '==> Set puppetserver hostname'
+          /opt/puppetlabs/bin/puppet apply -e 'ini_setting { "set master hostname": ensure => present, section => "main", value => $::fqdn, path => "/etc/puppetlabs/puppet/puppet.conf", setting => "server" }'
+          /bin/echo '==> Set puppetserver autosign'
+          /opt/puppetlabs/bin/puppet apply -e 'file { "/etc/puppetlabs/puppet/autosign.conf": ensure => file, content => "$::fqdn\n*\n", }'
+          /bin/touch /etc/puppetlabs/code/environments/production/manifests/site.pp
+          /opt/puppetlabs/bin/puppet resource service puppetserver enable=true
+          /bin/systemctl start puppetserver
+          /bin/yum groupinstall -y -q "Development Tools" "Development Libraries"
+          /bin/echo '==> Install + configure foreman and smart proxy'
+          /opt/puppetlabs/bin/puppet apply /vagrant/manifests/foreman_installation.pp
+          /opt/puppetlabs/bin/puppet apply -e 'ini_setting { "set foreman report ": ensure => present, section => "main", value => "log,foreman", path => "/etc/puppetlabs/puppet/puppet.conf", setting => "reports" }'
+          /usr/bin/gem install bundler --no-ri --quiet --no-verbose
+          /bin/echo '==> /usr/local/bin/bundle install --without mysql2 sqlite test --path vendor'
+          cd /opt/foreman; /usr/local/bin/bundle install --without mysql2 sqlite test --path vendor --quiet
+          /bin/echo '==> /usr/local/bin/bundle update foreman_default_hostgroup'
+          cd /opt/foreman; /usr/local/bin/bundle update foreman_default_hostgroup
+          /bin/echo '==> RAILS_ENV=production bundle exec rake db:migrate'
+          RAILS_ENV=production bundle exec rake db:migrate --quiet
+          /bin/echo '==> RAILS_ENV=production bundle exec rake assets:precompile locale:pack apipie:cache'
+          RAILS_ENV=production bundle exec rake assets:precompile locale:pack apipie:cache --quiet
+          /bin/echo '==> RAILS_ENV=production bundle exec rake db:seed'
+          CREDENTIALS=`RAILS_ENV=production bundle exec rake db:seed --quiet | grep "Login"`
+          /bin/echo '==> /usr/local/bin/bundle install --without development test --path vendor --quiet'
+          cd /opt/smart-proxy; /usr/local/bin/bundle install --without development test --path vendor --quiet
+          cd /opt/smart-proxy; /usr/local/bin/bundle update rubocop
+          /bin/echo '==> Configure supervisord for foreman and smart-proxy'
+          /opt/puppetlabs/bin/puppet apply /vagrant/manifests/foreman_post_install.pp
+          PASSWD=`/bin/echo $CREDENTIALS | awk ' { print $NF } '`
+          /bin/echo '==> Clear iptables rules'
+          /sbin/iptables -F
+          /bin/echo '==> Add new smart proxy to Foreman'
+          /bin/sleep 20
+          /bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ "name": "foreman", "url": "https://master.opstheater.vm:8443" } ' http://master.opstheater.vm:3000/api/smart_proxies
+          /bin/echo '==> Import all puppet classes and environments to Foreman'
+          /bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ }' http://master.opstheater.vm:3000/api/smart_proxies/1/import_puppetclasses
+          /bin/echo '==> Create OpsTheater hostgroup'
+          /bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ "name": "OpsTheater Infra", "environment_id": "1", "puppet_ca_proxy_id": "1", "puppet_proxy_id": "1" } ' http://master.opstheater.vm:3000/api/hostgroups
+          /bin/echo '==> /bin/systemctl restart puppetserver'
+          /bin/systemctl restart puppetserver
+          /bin/echo '==> Setup R10K'
+          /opt/puppetlabs/bin/puppet apply /vagrant/manifests/r10k_installation.pp
+          /opt/puppetlabs/puppet/bin/r10k deploy environment -pv
+          /bin/echo '==> puppet config set hiera_config /etc/puppetlabs/code/environments/production/hiera.yaml'
+          /opt/puppetlabs/bin/puppet config set hiera_config /etc/puppetlabs/code/environments/production/hiera.yaml
+          /bin/echo '==> /bin/systemctl restart puppetserver'
+          /bin/systemctl restart puppetserver
+          /bin/echo '==> Update Foreman puppet environments'
+          /bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ }' http://master.opstheater.vm:3000/api/smart_proxies/1/import_puppetclasses
+          /bin/echo '==> /opt/puppetlabs/bin/puppet agent -t'
+          /opt/puppetlabs/bin/puppet agent -t || true
+          /bin/systemctl stop puppet
+          /bin/echo '==> Foreman URL: http://master.opstheater.vm:3000'
+          /bin/echo "==> $CREDENTIALS"
+
+  pe-puppet-agent:
+    provisioners:
+      -
+        type: hosts
+        add_localhost_hostnames: false
+        sync_hosts: true
+      -
+        type: pe_agent
+        master_vm: !ruby/sym master
+      -
+        type: shell
+        inline: |-
+          /sbin/service puppet stop
+
+  pe-puppet-agent-2g:
+    provider:
+      type: virtualbox
+      customize:
+        - [modifyvm, !ruby/sym id, '--memory', 2048]
+    provisioners:
+      -
+        type: hosts
+        add_localhost_hostnames: false
+        sync_hosts: true
+      -
+        type: pe_agent
+        master_vm: !ruby/sym master
+      -
+        type: shell
+        inline: |-
+          /sbin/service puppet stop
+
+  foss-puppet-agent:
+    provisioners:
+      -
+        type: hosts
+        add_localhost_hostnames: false
+        sync_hosts: true
+      -
+        type: shell
+        inline: |-
+          /bin/yum install -y epel-release http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+          /bin/yum install -y puppet-agent
+          /opt/puppetlabs/bin/puppet config set --section main server master.opstheater.vm
+          /sbin/service puppet stop
+
+  foss-puppet-agent-el6:
+    provisioners:
+      -
+        type: hosts
+        add_localhost_hostnames: false
+        sync_hosts: true
+      -
+        type: shell
+        inline: |-
+          /usr/bin/yum install -y epel-release http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm
+          /usr/bin/yum install -y puppet-agent
+          /opt/puppetlabs/bin/puppet config set --section main server master.opstheater.vm
+          /sbin/service puppet stop

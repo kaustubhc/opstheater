@@ -1,0 +1,36 @@
+---
+opstheater::profile::base::packages:
+  screen:
+    ensure: present
+  mtr:
+    ensure: present
+  curl:
+    ensure: present
+  bash:
+    ensure: latest
+  iotop:
+    ensure: present
+  ethtool:
+    ensure: present
+  tcpdump:
+    ensure: present
+  nano:
+    ensure: present
+  telnet:
+    ensure: present
+  sysstat:
+    ensure: present
+  lsof:
+    ensure: present
+elastic_filebeat::output:
+    - "logstash"
+elastic_filebeat::logstash_output_hosts:
+    - "%{hiera('opstheater::logstash::fqdn')}:5044"
+elastic_filebeat::paths:
+    - '/var/log/messages'
+profile::common::filebeat_prospector:
+  syslogs:
+    paths:
+      - '/var/log/messages'
+    log_type: 'syslogs-beat'
+ssh::server::permit_root_login: 'without-password'

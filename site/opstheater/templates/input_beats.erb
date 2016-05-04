@@ -1,0 +1,10 @@
+input{
+  
+  beats {
+
+     <% unless @input_beats_port.nil? %>port => <%= @input_beats_port%><% end %>
+     <% unless @input_beats_type.nil? %>type => "<%= @input_beats_type%>"<% end %>     
+
+  }
+
+}

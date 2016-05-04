@@ -1,0 +1,53 @@
+filter {
+
+	
+    if [type] == "puppetserver-beat" and [source] == "/var/log/puppetlabs/puppetserver/puppetserver-access.log" {
+
+                grok {
+                        match => ["message","%{IPORHOST:hostname} (?:%{USERNAME:logname}|-) (?:%{USER:user}|-) - %{HTTPDATE:timestamp} \"(?:%{WORD:verb} %{URIPATHPARAM:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{IP:hostip1} %{IP:hostip2} %{NUMBER:port} %{NUMBER:tts}"]
+        }
+        date{
+            match => ["timestamp","dd/MMM/YYYY:HH:mm:ss Z"]
+            target => "@timestamp"
+            remove_field => ["timestamp"]
+        }
+    }
+
+
+    if [type] == "puppetdb-beat" and [source] == "/var/log/puppetlabs/puppetdb/puppetdb-access.log" {
+               
+		grok {
+			match => ["message","%{IPORHOST:clientip} - - \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent}"]
+        }
+        date{
+	    match => ["timestamp","dd/MMM/YYYY:HH:mm:ss Z"]
+            target => "@timestamp"
+            remove_field => ["timestamp"]
+        }
+    }
+
+    if [type] == "gitlablogs-beat" and [source] == "/var/log/gitlab/nginx/gitlab_access.log" {
+
+		grok {
+            match => ["message","%{IPORHOST:clientip} - - \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent}"]
+        }
+        date{
+	    match => ["timestamp","dd/MMM/YYYY:HH:mm:ss Z"]
+            target => "@timestamp"
+            remove_field => ["timestamp"]
+        }
+    }
+
+	if [type] == "mattermostlogs-beat" and [source] == "/var/log/gitlab/nginx/gitlab_mattermost_access.log" {
+
+		grok {
+            match => ["message","%{IPORHOST:clientip} - - \[%{HTTPDATE:timestamp}\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QS:referrer} %{QS:agent}"]
+        }
+        date{
+            match => ["timestamp","dd/MMM/YYYY:HH:mm:ss Z"]
+            target => "@timestamp"
+            remove_field => ["timestamp"]
+        }
+    }
+}
+

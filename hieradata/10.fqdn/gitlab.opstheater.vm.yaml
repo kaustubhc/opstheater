@@ -1,0 +1,18 @@
+---
+opstheater::profile::gitlab::gitlab_fqdn: "%{hiera('opstheater::gitlab::fqdn')}"
+opstheater::profile::gitlab::gitlab_url: "%{hiera('opstheater::http_mode')}://%{hiera('opstheater::gitlab::fqdn')}"
+opstheater::profile::gitlab::gitlab_ipaddress: "%{hiera('opstheater::gitlab::ipaddress')}"
+
+opstheater::profile::gitlab::gitlabci_url: "%{hiera('opstheater::http_mode')}://%{hiera('opstheater::gitlab::fqdn')}/ci"
+
+opstheater::profile::gitlab::mattermost_fqdn: "%{hiera('opstheater::mattermost::fqdn')}"
+opstheater::profile::gitlab::mattermost_url: "%{hiera('opstheater::http_mode')}://%{hiera('opstheater::mattermost::fqdn')}"
+
+opstheater::profile::gitlab::api_endpoint: "%{hiera('opstheater::http_mode')}://%{hiera('opstheater::gitlab::fqdn')}/api/v3"
+opstheater::profile::gitlab::api_user: 'root'
+opstheater::profile::gitlab::api_password: '5iveL!fe'
+
+opstheater::profile::gitlab::github_oauth_enabled: true
+opstheater::profile::gitlab::github_oauth_clientid: 'clientidgoeshere'
+opstheater::profile::gitlab::github_oauth_clientsecret: 'clientsecretgoeshere'
+opstheater::profile::gitlab::github_oauth_uri: 'https://github.com/'

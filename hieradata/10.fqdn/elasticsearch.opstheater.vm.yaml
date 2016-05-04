@@ -1,0 +1,35 @@
+---
+elasticsearch::manage_repo: true
+elasticsearch::repo_version: '2.x'
+opstheater::profile::elasticsearch::instances:
+  elasticsearch:
+    ensure: present
+    status: enabled
+    config:
+      network.host: "%{hiera('opstheater::elasticsearch::fqdn')}"
+      http.port: '9200'
+      index.max_result_window: '2147483647'
+profile::logstash::plugins:
+  'beats':
+    ensure: 'present'
+    type: 'input'
+    source: 'puppet:///modules/opstheater/logstash/beats.rb'
+  'elasticsearch':
+    ensure: 'present'
+    type: 'output'
+    source: 'puppet:///modules/opstheater/logstash/elasticsearch.rb'
+    filename: 'elasticsearch.rb'
+  'grok':
+    ensure: 'present'
+    type: 'filter'
+    source: 'puppet:///modules/opstheater/logstash/grok.rb'
+  'date':
+    ensure: 'present'
+    type: 'filter'
+    source: 'puppet:///modules/opstheater/logstash/date.rb'
+opstheater::profile::logstash::package_url: 'https://download.elastic.co/logstash/logstash/packages/centos/logstash-2.1.1-1.noarch.rpm'
+opstheater::profile::logstash::input_beats_port: '5044'
+opstheater::profile::logstash::input_beats_type: 'logs'
+opstheater::profile::logstash::output_codec: 'rubydebug'
+opstheater::profile::logstash::output_elasticsearch_hosts:
+    - "elasticsearch:9200"
