@@ -9,4 +9,7 @@ Check out the documentation in https://gitlab.olindata.com/opstheater/opstheater
 
 ## Need Help?
 
-Need help? Try emailing us at opstheater@googlegroups.com or chat with us on freenode IRC #opstheater
+Need help? Try one of these:
+
+* Google Group: email at opstheater@googlegroups.com or https://groups.google.com/forum/#!forum/opstheater
+* chat with us on freenode IRC #opstheater
