@@ -15,13 +15,20 @@ class opstheater::profile::base {
   include ::ssh::server
 
   # configure filebeat
-  include opstheater::profile::base::filebeat
+  #include opstheater::profile::base::filebeat
 
   # depending on the OS, include apt or yum repos
   case $::osfamily {
-    'debian' : { include opstheater::profile::base::apt }
-    'redhat' : { include opstheater::profile::base::yum }
-    default  : { fail("Unsupported Operating System family : ${::osfamily}") }
+    'debian': { include opstheater::profile::base::ubuntu }
+    'redhat': {
+     if $::os[release][major] == "7"
+      { include opstheater::profile::base::rhel7 }
+     elsif $::os[release][major] == "6"
+      { include opstheater::profile::base::rhel6 }
+     else
+      { fail("Unsupported Operating System  : ${::os[release][major]}")}
+      }
+    default: { fail("Unsupported Operating System family : ${::osfamily}") }
   }
 
   # load other network interfaces from hiera
@@ -32,7 +39,7 @@ class opstheater::profile::base {
 
   # apply basic icinga checks to servers
   if $::fqdn != hiera('opstheater::icingaweb::fqdn') {
-    include opstheater::profile::base::icinga
+  #  include opstheater::profile::base::icinga
     include opstheater::profile::icinga::client
   }
 
