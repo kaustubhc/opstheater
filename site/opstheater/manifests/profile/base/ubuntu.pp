@@ -14,7 +14,7 @@ class opstheater::profile::base::ubuntu {
     create_resources('apt::source', $repositories)
   }
   
-   # Adding Logstash
+  # Adding Logstash
   $logstash_fqdn = hiera('opstheater::logstash::fqdn')
 
   class { 'filebeat':
@@ -36,7 +36,6 @@ class opstheater::profile::base::ubuntu {
     ],
     log_type => 'syslog-beat',
   }
-
 
 
   icinga2::Object::Host {
