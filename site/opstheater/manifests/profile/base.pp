@@ -21,13 +21,13 @@ class opstheater::profile::base {
   case $::osfamily {
     'debian': { include opstheater::profile::base::ubuntu }
     'redhat': {
-     if $::os[release][major] == "7"
-      { include opstheater::profile::base::rhel7 }
-     elsif $::os[release][major] == "6"
-      { include opstheater::profile::base::rhel6 }
-     else
-      { fail("Unsupported Operating System  : ${::os[release][major]}")}
-      }
+      if $::os[release][major] == '7'
+        { include opstheater::profile::base::rhel7 }
+      elsif $::os[release][major] == '6'
+        { include opstheater::profile::base::rhel6 }
+      else
+        { fail("Unsupported Operating System  : ${::os[release][major]}")}
+    }
     default: { fail("Unsupported Operating System family : ${::osfamily}") }
   }
 
