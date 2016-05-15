@@ -22,9 +22,9 @@ class opstheater::profile::grafana {
     is_default       => true,
     database         => '[logstash-]YYYY.MM.DD',
     json_data        => {
-      timeField => @timestamp,
-      esVersion => 2,
-      interval  => Daily
+      timeField => '@timestamp',
+      esVersion => '2',
+      interval  => 'Daily',
     },
   }
 
