@@ -14,20 +14,4 @@ class opstheater::profile::grafana {
     require => Class[ 'grafana' ],
   }
 
-  class { 'influxdb::server' : }
-
-  exec { 'add_influxdb':
-    path    => '/bin:/usr/bin:/sbin:/usr/sbin',
-    unless  => '[ `influx -execute \'SHOW DATABASES\' |grep influxdb` == influxdb ]',
-    command => 'sleep 10 && curl -G http://localhost:8086/query --data-urlencode "q=CREATE DATABASE influxdb" && curl -G http://localhost:8086/query --data-urlencode "q=CREATE USER influxadmin WITH PASSWORD \'influxadmin\' WITH ALL PRIVILEGES"',
-    require => Class[ 'influxdb::server' ],
-  }
-
-  exec { 'influx_datasource':
-    path    => '/bin:/usr/bin:/sbin:/usr/sbin',
-    unless  => "[ `curl --silent 'http://${grafanauser}:${grafanapasswd}@${grafanaurl}:3000/api/datasources' -X GET | tr ',' '\\n' | grep '\"name\":\"Influx\"'` == '\"name\":\"Influx\"' ]",
-    command => "sleep 10;curl 'http://${grafanauser}:${grafanapasswd}@${grafanaurl}:3000/api/datasources' -X POST -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{\"name\":\"Influx\",\"type\":\"influxdb\",\"url\":\"http://${grafanaurl}:8086\",\"access\":\"proxy\",\"isDefault\":true,\"database\":\"influxdb\",\"user\":\"${user}\",\"password\":\"${password}\"'}",
-    require => Class[ 'influxdb::server', 'grafana' ],
-  }
-
 }
