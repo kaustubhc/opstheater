@@ -1,11 +1,14 @@
 class opstheater::profile::grafana {
-  $grafanauser          = hiera('opstheater::grafana::grafanauser')
-  $grafanapasswd        = hiera('opstheater::grafana::grafanapasswd')
-  $grafanaurl           = hiera('opstheater::grafana::url')
-  $user                 = hiera('opstheater::grafana::influxdb::user')
-  $password             = hiera('opstheater::grafana::influxdb::password')
+  $grafanauser    = hiera('opstheater::grafana::grafanauser')
+  $grafanapasswd  = hiera('opstheater::grafana::grafanapasswd')
+  $grafanaurl     = hiera('opstheater::grafana::url')
+  $user           = hiera('opstheater::grafana::influxdb::user')
+  $password       = hiera('opstheater::grafana::influxdb::password')
+  $install_method = hiera('opstheater::profile::grafana::install_method')
 
-  class { '::grafana': }
+  class { '::grafana':
+    install_method => $install_method,
+  }
 
   exec { 'elastic_datasource':
     path    => '/bin:/usr/bin:/sbin:/usr/sbin',

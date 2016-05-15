@@ -33,3 +33,4 @@ opstheater::profile::logstash::input_beats_type: 'logs'
 opstheater::profile::logstash::output_codec: 'rubydebug'
 opstheater::profile::logstash::output_elasticsearch_hosts:
     - "elasticsearch:9200"
+opstheater::profile::grafana::install_method: 'repo'
