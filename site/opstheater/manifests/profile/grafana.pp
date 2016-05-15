@@ -13,7 +13,7 @@ class opstheater::profile::grafana {
   # --data '{"Name":"OpsTheater7","type":"elasticsearch","url":"http://elasticsearch.opstheater.vm:9200","access":"proxy","isDefault":true,"database":"[logstash-]YYYY.MM.DD","jsonData":{"timeField":"@timestamp", "esVersion": 2, "interval":"Daily"}}'
 
   grafana_datasource { 'elastic':
-    grafana_url      => $grafanaurl,
+    grafana_url      => "http://${grafanaurl}:3000",
     grafana_user     => $grafanauser,
     grafana_password => $grafanapasswd,
     url              => "http://${elasticsearchurl}:9200",
