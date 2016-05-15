@@ -2,4 +2,4 @@
 :default_hostgroup:
   :facts_map:
     "OpsTheater Infra":
-      "hostname": "*"
+      "hostname": ".*"
