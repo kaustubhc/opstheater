@@ -4,7 +4,7 @@ exec { 'create-ssh-key':
   creates => '/root/.ssh/id_dsa.pub',
 } ->
 
-#https://docs.puppetlabs.com/references/latest/type.html#sshkey
+##https://docs.puppetlabs.com/references/latest/type.html#sshkey
 sshkey { 'github.com':
   ensure => present,
   type   => 'ssh-rsa',
