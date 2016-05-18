@@ -1,5 +1,6 @@
 class { 'supervisord':
   install_pip => true,
+  setuptools_url => 'https://bootstrap.pypa.io/ez_setup.py'
 }
 
 supervisord::program { 'foreman':
