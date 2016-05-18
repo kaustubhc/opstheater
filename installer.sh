@@ -26,7 +26,7 @@ echo Enter MySQL Servername:
 read MYSQL
 echo Enter MySQL IP address:
 read MYSQLIP
-echo Enter MySQL White List Range (Generally this is same n/w range of the mysql server ip eg: 10.20.1):
+echo Enter MySQL White List Range Generally this is same n/w range of the mysql server ip eg: 10.20.1:
 read MYSQLWLR
 
 echo Enter Admin Email:
@@ -36,7 +36,7 @@ read SMTPUSER
 echo Enter SMTP Passwd:
 read SMTPPWD
 
-echo Enter Opstheater mode (http or https):
+echo Enter Opstheater mode http or https:
 read MODE
 
 mv hieradata/10.fqdn/elasticsearch.opstheater.vm.yaml hieradata/10.fqdn/"$ELK"."$DOMAINNAME".yaml
