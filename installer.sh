@@ -145,11 +145,11 @@ PASSWD=`/bin/echo $CREDENTIALS | awk ' { print $NF } '`
 /sbin/iptables -F
 /bin/echo '==> Add new smart proxy to Foreman'
 /bin/sleep 20
-/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ "name": "foreman", "url": "https://puppet.adobe.vm:8443" } ' http://puppet.adobe.vm:3000/api/smart_proxies
+/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ "name": "foreman", "url": "https://$FQDN:8443" } ' http://$FQDN:3000/api/smart_proxies
 /bin/echo '==> Import all puppet classes and environments to Foreman'
-/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ }' http://puppet.adobe.vm:3000/api/smart_proxies/1/import_puppetclasses
+/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ }' http://$FQDN:3000/api/smart_proxies/1/import_puppetclasses
 /bin/echo '==> Create OpsTheater hostgroup'
-/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ "name": "OpsTheater Infra", "environment_id": "1", "puppet_ca_proxy_id": "1", "puppet_proxy_id": "1" } ' http://puppet.adobe.vm:3000/api/hostgroups
+/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ "name": "OpsTheater Infra", "environment_id": "1", "puppet_ca_proxy_id": "1", "puppet_proxy_id": "1" } ' http://$FQDN:3000/api/hostgroups
 /bin/echo '==> /bin/systemctl restart puppetserver'
 /bin/systemctl restart puppetserver
 /bin/echo '==> Setup R10K'
@@ -160,9 +160,9 @@ PASSWD=`/bin/echo $CREDENTIALS | awk ' { print $NF } '`
 /bin/echo '==> /bin/systemctl restart puppetserver'
 /bin/systemctl restart puppetserver
 /bin/echo '==> Update Foreman puppet environments'
-/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ }' http://adobe.puppet.vm:3000/api/smart_proxies/1/import_puppetclasses
+/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ }' http://$FQDN:3000/api/smart_proxies/1/import_puppetclasses
 /bin/echo '==> /opt/puppetlabs/bin/puppet agent -t'
 /opt/puppetlabs/bin/puppet agent -t || true
 /bin/systemctl stop puppet
-/bin/echo '==> Foreman URL: http://puppet.adobe.vm:3000'
+/bin/echo "==> Foreman URL: http://$FQDN:3000"
 /bin/echo "==> $CREDENTIALS"
