@@ -7,6 +7,8 @@ read DOMAINNAME
 echo Enter Puppet Servername:
 read PUPPETSERVERNAME
 
+FQDN="$PUPPETSERVERNAME"."$DOMAINNAME"
+
 echo Enter GitLab Servername:
 read GITSERVER
 echo Enter GitLab IP address:
@@ -60,47 +62,47 @@ mv -f installer/files/smart-proxy/settings.yml.tmp installer/files/smart-proxy/s
 
 
 echo '---' > hieradata/60.opstheater.yaml
-echo "'opstheater::domain': '"$DOMAINNAME"'" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::admin_email\': \""$MAILADMIN"@%{hiera\(\'opstheater::domain\'\)}\" >> $PWD/hieradata/60.opstheater.yaml
-echo "'opstheater::http_mode': '$MODE'" >> $PWD/hieradata/60.opstheater.yaml
-echo "'opstheater::smtp::fqdn': 'localhost'" >> $PWD/hieradata/60.opstheater.yaml
-echo "'opstheater::smtp::port': 587" >> $PWD/hieradata/60.opstheater.yaml
-echo "'opstheater::smtp::ssl_type': 'none'" >> $PWD/hieradata/60.opstheater.yaml
-echo "'opstheater::smtp::auth_type': 'login'" >> $PWD/hieradata/60.opstheater.yaml
-echo "'opstheater::smtp::openssl_verify_mode': 'none'" >> $PWD/hieradata/60.opstheater.yaml
-echo "'opstheater::smtp::username': '"$SMTPUSER"'" >> $PWD/hieradata/60.opstheater.yaml
-echo "'opstheater::smtp::password': '"$SMTPPWD"'" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::foreman::fqdn\': \""$PUPPETSERVERNAME".%{hiera\(\'opstheater::domain\'\)}\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::foreman::url\': \""%{hiera('opstheater::http_mode')}://%{hiera('opstheater::foreman::fqdn')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icinga::fqdn\': \""$ICINGA".%{hiera\(\'opstheater::domain\'\)}\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icinga::ipaddress\': \'"$ICINGAIP"\' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icinga::mysql_fqdn\': \""%{hiera('opstheater::mysql::fqdn')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icinga::mysql_ipaddress\': \""%{hiera('opstheater::mysql::ipaddress')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icinga::ido_password\': '"password"' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icingaweb::fqdn\': \""%{hiera('opstheater::icinga::fqdn')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icingaweb::ipaddress\': \""%{hiera('opstheater::icinga::ipaddress')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icingaweb::mysql_fqdn\': \""%{hiera('opstheater::icinga::mysql_fqdn')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icingaweb::mysql_ipaddress\': \""%{hiera('opstheater::icinga::mysql_ipaddress')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::icingaweb::webdb_password\': '"password"' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::elasticsearch::fqdn\': \""$ELK".%{hiera\(\'opstheater::domain\'\)}\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::elasticsearch::ipaddress\': \'"$ELKIP"\' >> $PWD/hieradata/60.opstheater.yaml >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::kibana::fqdn\': \""%{hiera('opstheater::elasticsearch::fqdn')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::kibana::ipaddress\': \""%{hiera('opstheater::elasticsearch::ipaddress')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::logstash::fqdn\': \""%{hiera('opstheater::elasticsearch::fqdn')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::logstash::ipaddress\': \""%{hiera('opstheater::elasticsearch::ipaddress')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::gitlab::fqdn\': \""$GITSERVER".%{hiera\(\'opstheater::domain\'\)}\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::gitlab::ipaddress\': \'"$GITSERVERIP"\' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::mattermost::fqdn\': \"chat.%{hiera\(\'opstheater::domain\'\)}\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::mattermost::url\': \""%{hiera('opstheater::http_mode')}://chat.%{hiera('opstheater::domain')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::mattermost::ipaddress\': \""%{hiera('opstheater::gitlab::ipaddress')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::mysql::fqdn\': \""$MYSQL".%{hiera\(\'opstheater::domain\'\)}\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::mysql::ipaddress\': \'"$MYSQLIP"\' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::mysql::whitelist_range\': \'"$MYSQLWLR".%\' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::grafana::grafanauser\': \'admin\' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::grafana::grafanapasswd\': \'admin\' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::grafana::url\': \""%{hiera('opstheater::elasticsearch::fqdn')}"\" >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::grafana::influxdb::user\': \'admin\' >> $PWD/hieradata/60.opstheater.yaml
-echo \'opstheater::grafana::influxdb::password\': \'admin\' >> $PWD/hieradata/60.opstheater.yaml
+echo "'opstheater::domain': '"$DOMAINNAME"'" >> hieradata/60.opstheater.yaml
+echo \'opstheater::admin_email\': \""$MAILADMIN"@%{hiera\(\'opstheater::domain\'\)}\" >> hieradata/60.opstheater.yaml
+echo "'opstheater::http_mode': '$MODE'" >> hieradata/60.opstheater.yaml
+echo "'opstheater::smtp::fqdn': 'localhost'" >> hieradata/60.opstheater.yaml
+echo "'opstheater::smtp::port': 587" >> hieradata/60.opstheater.yaml
+echo "'opstheater::smtp::ssl_type': 'none'" >> hieradata/60.opstheater.yaml
+echo "'opstheater::smtp::auth_type': 'login'" >> hieradata/60.opstheater.yaml
+echo "'opstheater::smtp::openssl_verify_mode': 'none'" >> hieradata/60.opstheater.yaml
+echo "'opstheater::smtp::username': '"$SMTPUSER"'" >> hieradata/60.opstheater.yaml
+echo "'opstheater::smtp::password': '"$SMTPPWD"'" >> hieradata/60.opstheater.yaml
+echo \'opstheater::foreman::fqdn\': \""$PUPPETSERVERNAME".%{hiera\(\'opstheater::domain\'\)}\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::foreman::url\': \""%{hiera('opstheater::http_mode')}://%{hiera('opstheater::foreman::fqdn')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::icinga::fqdn\': \""$ICINGA".%{hiera\(\'opstheater::domain\'\)}\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::icinga::ipaddress\': \'"$ICINGAIP"\' >> hieradata/60.opstheater.yaml
+echo \'opstheater::icinga::mysql_fqdn\': \""%{hiera('opstheater::mysql::fqdn')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::icinga::mysql_ipaddress\': \""%{hiera('opstheater::mysql::ipaddress')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::icinga::ido_password\': '"password"' >> hieradata/60.opstheater.yaml
+echo \'opstheater::icingaweb::fqdn\': \""%{hiera('opstheater::icinga::fqdn')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::icingaweb::ipaddress\': \""%{hiera('opstheater::icinga::ipaddress')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::icingaweb::mysql_fqdn\': \""%{hiera('opstheater::icinga::mysql_fqdn')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::icingaweb::mysql_ipaddress\': \""%{hiera('opstheater::icinga::mysql_ipaddress')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::icingaweb::webdb_password\': '"password"' >> hieradata/60.opstheater.yaml
+echo \'opstheater::elasticsearch::fqdn\': \""$ELK".%{hiera\(\'opstheater::domain\'\)}\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::elasticsearch::ipaddress\': \'"$ELKIP"\' >> hieradata/60.opstheater.yaml
+echo \'opstheater::kibana::fqdn\': \""%{hiera('opstheater::elasticsearch::fqdn')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::kibana::ipaddress\': \""%{hiera('opstheater::elasticsearch::ipaddress')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::logstash::fqdn\': \""%{hiera('opstheater::elasticsearch::fqdn')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::logstash::ipaddress\': \""%{hiera('opstheater::elasticsearch::ipaddress')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::gitlab::fqdn\': \""$GITSERVER".%{hiera\(\'opstheater::domain\'\)}\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::gitlab::ipaddress\': \'"$GITSERVERIP"\' >> hieradata/60.opstheater.yaml
+echo \'opstheater::mattermost::fqdn\': \"chat.%{hiera\(\'opstheater::domain\'\)}\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::mattermost::url\': \""%{hiera('opstheater::http_mode')}://chat.%{hiera('opstheater::domain')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::mattermost::ipaddress\': \""%{hiera('opstheater::gitlab::ipaddress')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::mysql::fqdn\': \""$MYSQL".%{hiera\(\'opstheater::domain\'\)}\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::mysql::ipaddress\': \'"$MYSQLIP"\' >> hieradata/60.opstheater.yaml
+echo \'opstheater::mysql::whitelist_range\': \'"$MYSQLWLR".%\' >> hieradata/60.opstheater.yaml
+echo \'opstheater::grafana::grafanauser\': \'admin\' >> hieradata/60.opstheater.yaml
+echo \'opstheater::grafana::grafanapasswd\': \'admin\' >> hieradata/60.opstheater.yaml
+echo \'opstheater::grafana::url\': \""%{hiera('opstheater::elasticsearch::fqdn')}"\" >> hieradata/60.opstheater.yaml
+echo \'opstheater::grafana::influxdb::user\': \'admin\' >> hieradata/60.opstheater.yaml
+echo \'opstheater::grafana::influxdb::password\': \'admin\' >> hieradata/60.opstheater.yaml
 
 
 
@@ -145,7 +147,7 @@ PASSWD=`/bin/echo $CREDENTIALS | awk ' { print $NF } '`
 /sbin/iptables -F
 /bin/echo '==> Add new smart proxy to Foreman'
 /bin/sleep 20
-/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ "name": "foreman", "url": "https://$FQDN:8443" } ' http://$FQDN:3000/api/smart_proxies
+/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d "{ \"name\": \"foreman\", \"url\": \"https://"${FQDN:8443}" }"  http://$FQDN:3000/api/smart_proxies
 /bin/echo '==> Import all puppet classes and environments to Foreman'
 /bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ }' http://$FQDN:3000/api/smart_proxies/1/import_puppetclasses
 /bin/echo '==> Create OpsTheater hostgroup'
