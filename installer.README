@@ -1,0 +1,45 @@
+This installer for manual installations and not vagrant.
+
+Before you begin:
+	Ensure you have system hostname set properly for all the servers. 
+	Ensure all the servers are able to communicate with each other with DNS names.
+	Add /etc/hosts entry for all the servers if required.
+	Install git and ensure git repository reachable from the master server.
+
+Installation Procedure
+
+	You will need internet access from all the server.
+
+	clone the repository in /opt with the below command.
+	# cd /opt ; git clone git@github.com:kaustubhc/opstheater.git opstheater
+
+	# cd opstheater
+	# ./installer.sh
+
+	Make sure you run the installer.sh from /opt/opstheater directory as shown above.
+	Provide all required names as asked by the installer. 
+	NOTE: for server name just enter server name and not fqdn eg: gitsrv01
+	      for domain name just enter domain name eg: example.com
+
+	Installer will install puppet master and foreman.	
+	Flow of installing servers in Opstheater stack.
+	
+	PuppetMaster
+	MySQL server
+	Icinga2 server
+	Git server
+	ELK server
+	
+	All the server names should match the names provided to the installer.
+
+	Once master server is installed. On other servers just run the below commands:
+
+	# /bin/yum install -y epel-release http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+        # /bin/yum install -y puppet-agent
+        # /opt/puppetlabs/bin/puppet config set --section main server master.opstheater.vm
+        # /sbin/service puppet stop
+	# puppet agent -t
+
+
+
+	This will do the required configuration settings respectively.
