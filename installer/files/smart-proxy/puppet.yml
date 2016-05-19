@@ -42,11 +42,11 @@
 #:mcollective_user: peadmin
 
 # URL of the puppet master itself for API requests
-:puppet_url: https://puppet.adobe.vm:8140
+:puppet_url: https://master.opstheater.vm:8140
 # SSL certificates used to access the puppet master API
 :puppet_ssl_ca: /etc/puppetlabs/puppet/ssl/certs/ca.pem
-:puppet_ssl_cert: /etc/puppetlabs/puppet/ssl/certs/puppet.adobe.vm.pem
-:puppet_ssl_key: /etc/puppetlabs/puppet/ssl/private_keys/puppet.adobe.vm.pem
+:puppet_ssl_cert: /etc/puppetlabs/puppet/ssl/certs/master.opstheater.vm.pem
+:puppet_ssl_key: /etc/puppetlabs/puppet/ssl/private_keys/master.opstheater.vm.pem
 
 # Override use of Puppet's API to list environments, by default it will use only if
 # environmentpath is given in puppet.conf, else will look for environments in puppet.conf

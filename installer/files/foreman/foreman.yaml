@@ -1,9 +1,9 @@
 ---
 # Update for your Foreman and Puppet master hostname(s)
-:url: "http://puppet.adobe.vm:3000"
+:url: "http://master.opstheater.vm:3000"
 :ssl_ca: "/etc/puppetlabs/puppet/ssl/certs/ca.pem"
-:ssl_cert: "/etc/puppetlabs/puppet/ssl/certs/puppet.adobe.vm.pem"
-:ssl_key: "/etc/puppetlabs/puppet/ssl/private_keys/puppet.adobe.vm.pem"
+:ssl_cert: "/etc/puppetlabs/puppet/ssl/certs/master.opstheater.vm.pem"
+:ssl_key: "/etc/puppetlabs/puppet/ssl/private_keys/master.opstheater.vm.pem"
 
 # Advanced settings
 :puppetdir: "/opt/puppetlabs/server/data/puppetserver"

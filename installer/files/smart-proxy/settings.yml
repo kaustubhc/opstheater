@@ -3,16 +3,16 @@
 # If enabled, all communication would be verified via SSL
 # NOTE that both certificates need to be signed by the same CA in order for this to work
 # see http://theforeman.org/projects/smart-proxy/wiki/SSL for more information
-:ssl_certificate: /etc/puppetlabs/puppet/ssl/certs/puppet.adobe.vm.pem
+:ssl_certificate: /etc/puppetlabs/puppet/ssl/certs/master.opstheater.vm.pem
 :ssl_ca_file: /etc/puppetlabs/puppet/ssl/certs/ca.pem
-:ssl_private_key: /etc/puppetlabs/puppet/ssl/private_keys/puppet.adobe.vm.pem
+:ssl_private_key: /etc/puppetlabs/puppet/ssl/private_keys/master.opstheater.vm.pem
 
 # Hosts which the proxy accepts connections from
 # commenting the following lines would mean every verified SSL connection allowed
 # HTTPS: test the certificate CN
 # HTTP: test the reverse DNS entry of the remote IP
 :trusted_hosts:
-- puppet.adobe.vm
+- master.opstheater.vm
 #- foreman.dev.domain
 #to deny access to all hosts use:
 #:trusted_hosts: []
@@ -22,7 +22,7 @@
 # (default: true)
 #:forward_verify: true
 
-:foreman_url: http://puppet.adobe.vm:3000
+:foreman_url: http://master.opstheater.vm:3000
 
 # SSL settings for client authentication against Foreman. If undefined, the values
 # from general SSL options are used instead. Mainly useful when Foreman uses
