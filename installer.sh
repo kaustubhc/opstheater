@@ -147,7 +147,7 @@ PASSWD=`/bin/echo $CREDENTIALS | awk ' { print $NF } '`
 /sbin/iptables -F
 /bin/echo '==> Add new smart proxy to Foreman'
 /bin/sleep 20
-/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d "{ \"name\": \"foreman\", \"url\": \"https://"${FQDN}":8443 }"  http://$FQDN:3000/api/smart_proxies
+/bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d "{ \"name\": \"foreman\", \"url\": \"https://"${FQDN}":8443\" }"  http://$FQDN:3000/api/smart_proxies
 /bin/echo '==> Import all puppet classes and environments to Foreman'
 /bin/curl -k -s -u admin:$PASSWD -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X POST -d '{ }' http://$FQDN:3000/api/smart_proxies/1/import_puppetclasses
 /bin/echo '==> Create OpsTheater hostgroup'
